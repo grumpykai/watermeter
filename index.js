@@ -129,7 +129,11 @@ class ImageMonitor {
         }
 
         // ADD YOUR CUSTOM PROCESSING LOGIC HERE
-        await geminiOCR(croppedImage, 'image/png')
+        const reading = await geminiOCR(croppedImage, 'image/png')
+
+        await publishMessage(reading.value)
+            .then(() => console.log('Message sent to test.mosquitto.org'))
+            .catch(error => console.error('Failed:', error));
     }
 
     async convertLCDWithCustomThresholds(inputPath, outputPath, thresholds = [200, 185, 170, 155, 140, 125, 110, 95, 80, 65]) {
