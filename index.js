@@ -4,7 +4,7 @@ const https = require('https');
 const http = require('http');
 const sharp = require('sharp');
 const PNG = require('pngjs').PNG;
-const publishMessage = require('./mqttPublish.js'); // Import MQTT publish function
+const { publishMessage } = require('./mqttPublish.js'); // Import MQTT publish function
 
 
 let pixelmatch = null;
@@ -122,13 +122,14 @@ class ImageMonitor {
         // Save the image with timestamp for debugging
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const filename = `change_detected_${timestamp}.png`;
-
-        try {
-            await fs.promises.writeFile(filename, croppedImage);
-            console.log(`📸 Saved detection image: ${filename}`);
-        } catch (error) {
-            console.error('Failed to save detection image:', error.message);
-        }
+        /*
+                try {
+                    await fs.promises.writeFile(filename, croppedImage);
+                    console.log(`📸 Saved detection image: ${filename}`);
+                } catch (error) {
+                    console.error('Failed to save detection image:', error.message);
+                }
+        */
 
         // ADD YOUR CUSTOM PROCESSING LOGIC HERE
         const reading = await geminiOCR(croppedImage, 'image/png')
@@ -259,7 +260,7 @@ class ImageMonitor {
         // Set up interval for subsequent checks
         this.intervalId = setInterval(() => {
             this.monitor();
-        }, 10000); // 10 seconds
+        }, config.interval);
 
         // Graceful shutdown
         process.on('SIGINT', () => {

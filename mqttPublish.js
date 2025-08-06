@@ -7,10 +7,6 @@ const { config } = require('./config.js');
  * Publishes messages to an MQTT broker using Mosquitto test broker
  */
 
-// Constants
-const DEFAULT_BROKER_URL = config.mqttServer || 'test.mosquitto.org:1883';
-const DEFAULT_TOPIC = config.mqttTopic || 'grumpykai/watermeter';
-
 let client = null;
 let isConnected = false;
 
@@ -30,16 +26,7 @@ function connect(options = {}) {
             return;
         }
 
-        const { brokerUrl = DEFAULT_BROKER_URL, username, password, clientOptions = {} } = options;
-
-        const mqttOptions = {
-            ...clientOptions,
-        };
-
-        if (username) mqttOptions.username = username;
-        if (password) mqttOptions.password = password;
-
-        client = mqtt.connect(brokerUrl, mqttOptions);
+        client = mqtt.connect(`mqtt://${config.mqttServer}`);
 
         client.on('connect', () => {
             isConnected = true;
@@ -72,7 +59,7 @@ function connect(options = {}) {
 async function publishMessage(message, options = {}) {
     try {
         const {
-            topic = DEFAULT_TOPIC,
+            topic = config.mqttTopic,
             publishOptions = { qos: 0, retain: false },
             connectionOptions = {}
         } = options;
@@ -137,9 +124,7 @@ const mqttPublisher = {
     publishMessage,
     connect,
     disconnect,
-    getConnectionStatus,
-    DEFAULT_BROKER_URL,
-    DEFAULT_TOPIC
+    getConnectionStatus
 };
 
 // CommonJS export
@@ -151,5 +136,4 @@ module.exports.publishMessage = publishMessage;
 module.exports.connect = connect;
 module.exports.disconnect = disconnect;
 module.exports.getConnectionStatus = getConnectionStatus;
-module.exports.DEFAULT_BROKER_URL = DEFAULT_BROKER_URL;
-module.exports.DEFAULT_TOPIC = DEFAULT_TOPIC;
+
