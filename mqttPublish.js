@@ -1,13 +1,15 @@
 const mqtt = require('mqtt');
 
+const { config } = require('./config.js');
+
 /**
  * MQTT Publisher Module
  * Publishes messages to an MQTT broker using Mosquitto test broker
  */
 
 // Constants
-const DEFAULT_BROKER_URL = 'mqtt://test.mosquitto.org:1883';
-const DEFAULT_TOPIC = 'grumpykai/watermeter';
+const DEFAULT_BROKER_URL = config.mqttServer || 'test.mosquitto.org:1883';
+const DEFAULT_TOPIC = config.mqttTopic || 'grumpykai/watermeter';
 
 let client = null;
 let isConnected = false;

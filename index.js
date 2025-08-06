@@ -4,6 +4,8 @@ const https = require('https');
 const http = require('http');
 const sharp = require('sharp');
 const PNG = require('pngjs').PNG;
+const publishMessage = require('./mqttPublish.js'); // Import MQTT publish function
+
 
 let pixelmatch = null;
 let geminiOCR = null;
@@ -145,7 +147,7 @@ class ImageMonitor {
             const image = sharp(inputPath);
             const { width, height } = await image.metadata();
 
-            console.log(`Processing image: ${width}x${height}`);
+            // console.log(`Processing image: ${width}x${height}`);
 
             const chunkWidth = Math.floor(width / 10);
             const processedChunks = [];
@@ -155,7 +157,7 @@ class ImageMonitor {
                 const extractWidth = (i === 9) ? width - left : chunkWidth;
                 const threshold = thresholds[i];
 
-                console.log(`Processing chunk ${i + 1}/10: x=${left}, width=${extractWidth}, threshold=${threshold}`);
+                // console.log(`Processing chunk ${i + 1}/10: x=${left}, width=${extractWidth}, threshold=${threshold}`);
 
                 const processedChunk = await sharp(inputPath)
                     .extract({ left, top: 0, width: extractWidth, height })
@@ -184,12 +186,13 @@ class ImageMonitor {
                 .png();
 
             await finalImage.toFile(outputPath);
-            console.log('Custom threshold conversion completed!');
+
+            console.log(`💾 Converted image saved to ${outputPath}`);
 
             return finalImage.toBuffer();
 
         } catch (error) {
-            console.error('Error converting image:', error);
+            console.error('❌ Error converting image:', error);
             throw error;
         }
     }
