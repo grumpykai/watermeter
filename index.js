@@ -6,6 +6,8 @@ const sharp = require('sharp');
 const PNG = require('pngjs').PNG;
 const { publishMessage } = require('./mqttPublish.js'); // Import MQTT publish function
 
+// TODO: Implement Detection Area Logic
+
 
 let pixelmatch = null;
 let geminiOCR = null;

@@ -1,5 +1,5 @@
 // Configuration
-export const config = {
+const config = {
     interval: 60000, // 1 minute
     url: 'http://192.168.178.171:8081',
     cropParams: {
@@ -18,3 +18,6 @@ export const config = {
     mqttServer: 'test.mosquitto.org:1883',
     mqttTopic: 'grumpykai/watermeter',
 };
+
+module.exports = config;
+module.exports.config = config;
