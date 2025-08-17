@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import fs from 'fs/promises';
 import { Buffer } from 'buffer';
-import secrets from './secrets.json' with { type: 'json' };
+import secrets from '../config/secrets.json' with { type: 'json' };
 
 
 /**

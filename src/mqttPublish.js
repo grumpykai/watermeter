@@ -1,6 +1,6 @@
 const mqtt = require('mqtt');
 
-const { config } = require('./config.js');
+const { config } = require('../config/config.js');
 
 /**
  * MQTT Publisher Module

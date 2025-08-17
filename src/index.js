@@ -1,4 +1,4 @@
-const { config } = require('./config.js'); // Import configuration
+const { config } = require('../config/config.js'); // Import configuration
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
@@ -209,6 +209,7 @@ class ImageMonitor {
         this.isProcessing = true;
 
         try {
+
             console.log(`📥 Downloading image from ${this.url}...`);
             const imageBuffer = await this.downloadImage(this.url);
 
