@@ -8,6 +8,7 @@ const { publishMessage } = require('./mqttPublish.js'); // Import MQTT publish f
 
 // TODO: Implement Detection Area Logic
 
+const loadFromFile = config.loadFromFile || false; // Use local file for testing if configured
 
 let pixelmatch = null;
 let geminiOCR = null;
@@ -34,6 +35,19 @@ class ImageMonitor {
 
     async downloadImage(url) {
         return new Promise((resolve, reject) => {
+
+            if (loadFromFile) {
+                // Load image from local file for testing
+                fs.readFile(url, (err, data) => {
+                    if (err) {
+                        reject(new Error(`Failed to read file: ${err.message}`));
+                    } else {
+                        resolve(data);
+                    }
+                });
+                return;
+            }
+
             const protocol = url.startsWith('https') ? https : http;
 
             protocol.get(url, (response) => {

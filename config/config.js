@@ -1,7 +1,9 @@
 // Configuration
 const config = {
     interval: 60000, // 1 minute
-    url: 'http://192.168.178.171:8081',
+    //url: 'http://192.168.178.171:8081',
+    loadFromFile: true,
+    url: './data/watermeter.jpg', // Local file for testing
     cropParams: {
         x: 213,      // X position from top-left corner
         y: 150,      // Y position from top-left corner
