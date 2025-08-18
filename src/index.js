@@ -293,4 +293,25 @@ class ImageMonitor {
 
 // Create and start monitor
 const monitor = new ImageMonitor(config.url, config.cropParams, config.threshold);
+
+// Startup: Copy all files from ../templates/config to ../config if they don't exist
+if (!fs.existsSync('./config')) {
+    fs.mkdirSync('./config', { recursive: true });
+}
+
+fs.readdirSync('./templates/config').forEach(file => {
+    const srcPath = `./templates/config/${file}`;
+    const destPath = `./config/${file}`;
+    if (!fs.existsSync(destPath)) {
+        fs.copyFileSync(srcPath, destPath);
+        console.log(`📂 Copied ${file} to ./config`)
+            ;
+
+    } else {
+
+        console.log(`📂 ${file} already exists in ./config, skipping copy`);
+    }
+});
+
+// Start the monitor
 monitor.start();
