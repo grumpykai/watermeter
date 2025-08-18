@@ -70,7 +70,7 @@ class ImageMonitor {
                 .extract({ left: x, top: y, width: width, height: height })
                 .png()
                 .toBuffer();
-            const enhanced = await this.convertLCDWithCustomThresholds(img, 'custom_threshold_image.png', [45, 47, 47, 47, 45, 40, 35, 30, 25, 24]);
+            const enhanced = await this.convertLCDWithCustomThresholds(img, [45, 47, 47, 47, 45, 40, 35, 30, 25, 24]);
             return enhanced;
         } catch (error) {
             throw new Error(`Image cropping failed: ${error.message}`);
@@ -115,7 +115,15 @@ class ImageMonitor {
                 { threshold: this.threshold } // Pixel difference threshold
             );
 
-            fs.writeFileSync('diff.png', PNG.sync.write(diff));
+            // Save with timestamp as filename in./data
+            if (!fs.existsSync('./data')) {
+                fs.mkdirSync('./data', { recursive: true });
+            }
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const diffFilename = `./data/diff_${timestamp}.png`;
+            console.log(`📊 Saving diff image to ${diffFilename}`);
+            // Write diff image to file
+            fs.writeFileSync(diffFilename, PNG.sync.write(diff));
 
             const diffPercentage = totalPixels > 0 ? (numDiffPixels / totalPixels) * 100 : 0;
             const isDifferent = diffPercentage > (this.threshold * 100);
@@ -137,7 +145,7 @@ class ImageMonitor {
 
         // Save the image with timestamp for debugging
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const filename = `change_detected_${timestamp}.png`;
+        const filename = `./data/change_detected_${timestamp}.png`;
         /*
                 try {
                     await fs.promises.writeFile(filename, croppedImage);
@@ -155,7 +163,7 @@ class ImageMonitor {
             .catch(error => console.error('Failed:', error));
     }
 
-    async convertLCDWithCustomThresholds(inputPath, outputPath, thresholds = [200, 185, 170, 155, 140, 125, 110, 95, 80, 65]) {
+    async convertLCDWithCustomThresholds(inputPath, thresholds = [200, 185, 170, 155, 140, 125, 110, 95, 80, 65]) {
         try {
             if (thresholds.length !== 10) {
                 throw new Error('Exactly 10 threshold values must be provided');
@@ -201,6 +209,14 @@ class ImageMonitor {
             })
                 .composite(processedChunks)
                 .png();
+
+            // Save the final image to ./data prefixed with 'custom_threshold_' and timestamp
+            if (!fs.existsSync('./data')) {
+                fs.mkdirSync('./data', { recursive: true });
+            }
+
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const outputPath = `./data/custom_threshold_${timestamp}.png`;
 
             await finalImage.toFile(outputPath);
 
